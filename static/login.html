@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Corporate Stock Market </title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@900&display=swap"
+        rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+
+    <div class="auth-split">
+
+        <!-- LEFT SIDE -->
+        <div class="auth-sidebar"
+            style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=2070&auto=format&fit=crop');">
+
+            <div class="auth-sidebar-content">
+                <h2>CONTROL <br> THE MARKET.</h2>
+                <p>Discipline. Patience. Execution. That’s how wealth is built.</p>
+                <div style="width:50px;height:3px;background:var(--accent-primary);margin-top:20px;"></div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="auth-form-container">
+
+            <div class="auth-box-journal">
+
+                <!-- Logo -->
+                <div class="journal-logo">
+                   Corporate <span>Stock Market </span>
+                </div>
+                <div class="journal-subtitle">Trading Simulator</div>
+
+                <h3 style="text-align:center; margin-bottom:25px;">
+                    ACCESS YOUR ACCOUNT
+                </h3>
+
+                <!-- FORM -->
+                <div class="auth-form">
+
+                    <div class="input-group">
+                        <label>USERNAME</label>
+                        <input type="text" id="username" placeholder="Enter username">
+                    </div>
+
+                    <div class="input-group" style="margin-top:15px;">
+                        <label>PASSWORD</label>
+                        <input type="password" id="password" placeholder="Enter password">
+                    </div>
+
+                    <button class="btn" onclick="login()"
+                        style="margin-top:25px; background: var(--accent-primary); color:#fff;">
+                        ENTER THE SYSTEM
+                    </button>
+
+                    <div id="error-msg" class="feedback-error mt-2"></div>
+
+                </div>
+
+                <!-- FOOTER -->
+                <div class="auth-links" style="text-align:center; margin-top:30px;">
+                    New here?
+                    <a href="/signup">Create Account</a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        async function login() {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+            const btn = document.querySelector('.btn');
+            const error = document.getElementById('error-msg');
+
+            if (!u || !p) {
+                error.innerText = "Fill all fields.";
+                return;
+            }
+
+            btn.innerText = "AUTHENTICATING...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+
+                if (res.ok) {
+                    window.location.href = '/';
+                } else {
+                    const data = await res.json();
+                    error.innerText = data.error || "Login failed.";
+                }
+
+            } catch (e) {
+                error.innerText = "Network error.";
+            }
+
+            btn.innerText = "ENTER THE SYSTEM";
+            btn.disabled = false;
+        }
+    </script>
+
+</body>
+
+</html>

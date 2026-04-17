@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Account | WallStreet Journal</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Playfair+Display:wght@900&display=swap"
+        rel="stylesheet">
+
+    <!-- Your CSS -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+
+    <div class="auth-split">
+
+        <!-- LEFT SIDE (IMAGE / BRANDING) -->
+        <div class="auth-sidebar"
+            style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop');">
+
+            <div class="auth-sidebar-content">
+                <h2>BECOME <br> RELENTLESS.</h2>
+                <p>I want you to deal with your problems by becoming rich.</p>
+                <div style="width: 50px; height: 3px; background: var(--accent-primary); margin-top: 20px;"></div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE (FORM) -->
+        <div class="auth-form-container">
+
+            <div class="auth-box-journal">
+
+                <!-- Logo -->
+                <div class="journal-logo">
+                    WALL<span>STREET</span>
+                </div>
+                <div class="journal-subtitle">Journal & Simulator</div>
+
+                <h3 style="text-align:center; margin-bottom:25px;">
+                    RECRUITING NEW TALENT
+                </h3>
+
+                <!-- FORM -->
+                <div class="auth-form">
+
+                    <div class="input-group">
+                        <label>CHOOSE IDENTITY</label>
+                        <input type="text" id="username" placeholder="Enter username">
+                    </div>
+
+                    <div class="input-group" style="margin-top:15px;">
+                        <label>SECURITY KEY</label>
+                        <input type="password" id="password" placeholder="Min 4 characters">
+                    </div>
+
+                    <button class="btn" onclick="signup()"
+                        style="margin-top:25px; background: var(--accent-primary); color:#fff;">
+                        ENROLL IN THE FIRM
+                    </button>
+
+                    <div id="error-msg" class="feedback-error mt-2"></div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="auth-links" style="text-align:center; margin-top:30px;">
+                    Already on the payroll?
+                    <a href="/login">Sign In</a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        async function signup() {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+            const btn = document.querySelector('.btn');
+            const error = document.getElementById('error-msg');
+
+            if (!u || !p) {
+                error.innerText = "Fill all fields.";
+                return;
+            }
+
+            btn.innerText = "PROCESSING...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+
+                if (res.ok) {
+                    window.location.href = '/';
+                } else {
+                    const data = await res.json();
+                    error.innerText = data.error || "Signup failed.";
+                }
+
+            } catch (e) {
+                error.innerText = "Network error.";
+            }
+
+            btn.innerText = "ENROLL IN THE FIRM";
+            btn.disabled = false;
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Stock Market </title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- ================= HEADER ================= -->
+        <header class="top-nav">
+
+            <div class="logo">
+                <span class="logo-text">Corporate <span class="highlight">Stock Market </span></span>
+
+                <div class="tooltip-container">
+                    <span class="info-icon">i</span>
+                    <div class="tooltip">
+                        <strong>Welcome to WallStreat!</strong><br>
+                        Start with ₹10,000 and learn trading.<br>
+                        News impacts stock prices. Maximize profits!
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-stats">
+
+                <div class="stat-box">
+                    <span class="stat-label">Player</span>
+                    <span class="stat-value" id="nav-username">--</span>
+                    <div style="font-size:0.7rem; margin-top:2px;">
+                        <a href="/logout" style="color:var(--text-secondary); text-decoration:none;">Logout</a>
+                        <a href="/admin" id="nav-admin"
+                            style="display:none; color:var(--accent-primary); margin-left:8px; text-decoration:none;">Admin</a>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <span class="stat-label">Cash</span>
+                    <span class="stat-value" id="user-balance">₹ --</span>
+                </div>
+
+                <div class="stat-box">
+                    <span class="stat-label">Portfolio</span>
+                    <span class="stat-value" id="portfolio-value">₹ --</span>
+                </div>
+
+                <div class="stat-box">
+                    <span class="stat-label">Net Worth</span>
+                    <span class="stat-value highlight-green" id="total-net-worth">₹ --</span>
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- ================= MAIN ================= -->
+        <main class="main-layout">
+
+            <!-- ===== LEFT SIDEBAR ===== -->
+            <section class="sidebar left-sidebar">
+                <div class="sidebar-header">
+                    <h2>Market</h2>
+                    <span class="live-indicator">LIVE</span>
+                </div>
+
+                <div class="stock-list" id="stock-list">
+                    <div class="loading">Loading markets...</div>
+                </div>
+            </section>
+
+            <!-- ===== CENTER ===== -->
+            <section class="center-content">
+
+                <!-- CHART -->
+                <div class="chart-container glass-panel">
+                    <div class="chart-header responsive-header">
+
+                        <div class="chart-title-wrap">
+                            <h2 id="active-stock-name">Select a stock</h2>
+                            <button id="btn-maximize" class="icon-btn">⛶</button>
+                        </div>
+
+                        <div class="active-stock-price" id="active-stock-price">₹ --</div>
+                    </div>
+
+                    <div class="chart-wrapper">
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- TRADE -->
+                <div class="trading-panel glass-panel">
+                    <h3>Trade</h3>
+
+                    <div class="trade-controls responsive-trade">
+
+                        <div class="input-group">
+                            <label>Quantity</label>
+                            <input type="number" id="trade-quantity" value="1" min="1">
+                        </div>
+
+                        <div id="trade-cost-preview" class="trade-preview">
+                            Total: ₹ 0.00
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="btn-buy" class="btn btn-buy">Buy</button>
+                            <button id="btn-sell" class="btn btn-sell">Sell</button>
+                        </div>
+
+                    </div>
+
+                    <div id="trade-feedback" class="feedback-msg"></div>
+                </div>
+
+                <!-- PORTFOLIO -->
+                <div class="portfolio-container glass-panel">
+                    <h3>Your Holdings</h3>
+
+                    <div class="portfolio-list" id="portfolio-list">
+                        <div class="empty-state">No stocks yet.</div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ===== RIGHT SIDEBAR ===== -->
+            <section class="sidebar right-sidebar">
+
+                <div class="sidebar-header tabs-header">
+                    <button id="tab-news" class="tab-btn active" onclick="switchTab('news')">News</button>
+                    <button id="tab-leader" class="tab-btn" onclick="switchTab('leaderboard')">Leaderboard</button>
+                </div>
+
+                <div class="news-feed" id="news-feed">
+                    <div class="loading">Waiting for news...</div>
+                </div>
+
+                <div class="leaderboard-list" id="leaderboard-list" style="display:none;">
+                    <div class="loading">Fetching ranks...</div>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- ================= MOBILE BOTTOM NAV ================= -->
+    <nav class="mobile-bottom-nav" id="mobile-nav" style="display: none;">
+        <button class="bottom-tab-btn active" onclick="switchMobileTab('market', this)">
+            <span class="tab-icon">📊</span>
+            <span class="tab-label">Market</span>
+        </button>
+        <button class="bottom-tab-btn" onclick="switchMobileTab('trade', this)">
+            <span class="tab-icon">📈</span>
+            <span class="tab-label">Trade</span>
+        </button>
+        <button class="bottom-tab-btn" onclick="switchMobileTab('news', this)">
+            <span class="tab-icon">📰</span>
+            <span class="tab-label">News</span>
+        </button>
+    </nav>
+
+    <!-- ================= MODAL ================= -->
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-content glass-panel">
+
+            <div class="modal-header">
+                <h2 id="modal-username">Player Profile</h2>
+                <button class="icon-btn" onclick="closeProfileModal()">✖</button>
+            </div>
+            <div class="modal-body">
+                <h3>Holdings</h3>
+                <div id="modal-portfolio-list" class="portfolio-list" style="margin-top: 15px;"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= SCRIPT ================= -->
+    <script src="/static/app.js"></script>
+    <script>
+        alert("Inform everyone that tomorrow by 3PM. Market will close and the announcement of winners will take place")
+    </script>
+
+</body>
+
+</html>
