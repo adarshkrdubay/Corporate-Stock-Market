@@ -87,39 +87,7 @@ def signupold():
         return render_template('signup.html')
 
 
-@app.route('/signup123456', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'GET':
-        return render_template('signupn.html')
 
-    data = request.json
-    username = data.get('username')
-    password = data.get('password')
-
-    if not username or not password or len(password) < 4:
-        return jsonify({"error": "Invalid input"}), 400
-
-    conn = get_db()
-    cursor = conn.cursor()
-
-    # Check if exists
-    cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
-    if cursor.fetchone():
-        conn.close()
-        return jsonify({"error": "Username taken"}), 400
-
-    pw_hash = generate_password_hash(password)
-    # Default 10000 balance, is_admin = 0
-    cursor.execute("INSERT INTO users (username, password_hash, balance, is_admin) VALUES (?, ?, 8000.0, 0)",
-                   (username, pw_hash))
-    user_id = cursor.lastrowid
-    conn.commit()
-    conn.close()
-
-    session['user_id'] = user_id
-    session['username'] = username
-    session['is_admin'] = False
-    return jsonify({"success": True})
 
 @app.route('/logout')
 def logout():
