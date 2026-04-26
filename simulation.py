@@ -4,11 +4,17 @@ from database import get_db
 
 NEWS_TEMPLATES = [
     # Positive
-    ("YYYYYYYYYYY {}", 1.05),
-   
+    ("Earnings report exceeds expectations for {}", 1.05),
+    ("{} announces major new partnership", 1.08),
+    ("Government policy favors {} sector", 1.03),
+    ("New product launch by {} highly successful", 1.06),
+    ("{} CEO wins industry leadership award", 1.02),
     # Negative
-    ("{} XXXXXXXX", 0.95),
-    
+    ("{} faces unexpected supply chain issues", 0.95),
+    ("Regulatory probe launched against {}", 0.92),
+    ("Quarterly profits dip for {}", 0.96),
+    ("{} loses key contract to competitor", 0.93),
+    ("Broader market slump affects {}", 0.97)
 ]
 from datetime import datetime
 import pytz
